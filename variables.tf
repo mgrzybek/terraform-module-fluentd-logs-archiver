@@ -36,61 +36,14 @@ variable "consumer_group" {
   description = "The key used to consumer using several archivers in parallel"
 }
 
-variable "destination_tech_topic" {
-  type        = string
-  description = "The topic to write the tech logs into"
-}
-
 variable "topics" {
   type        = list(string)
   description = "A list a topics to read from"
 }
 
-variable "max_bytes" {
-  type = number
-  default = 1048576
-  description = "ruby-kafka consumer option"
-}
-
-variable "max_wait_time" {
-  type = number
-  default = nil
-  description = "ruby-kafka consumer option"
-}
-
-variable "min_bytes" {
-  type = number
-  default = nil
-  description = "ruby-kafka consumer option"
-}
-
-variable "offset_commit_interval" {
-  type = number
-  default = nil
-  description = "ruby-kafka consumer option"
-}
-
-variable "offset_commit_threshold" {
-  type = number
-  default = nil
-  description = "ruby-kafka consumer option"
-}
-
-variable "fetcher_max_queue_size" {
-  type = number
-  default = nil
-  description = "ruby-kafka consumer option"
-}
-
-variable "refresh_topic_interval" {
-  type = number
-  default = nil
-  description = "ruby-kafka consumer option"
-}
-
 variable "start_from_beginning" {
-  type = boolean
-  default = true
+  type        = bool
+  default     = true
   description = "ruby-kafka consumer option"
 }
 
@@ -114,8 +67,8 @@ variable "endpoint" {
 }
 
 variable "time_slice_format" {
-  type = string
-  default = "%Y-%m-%d-%H-%M"
+  type        = string
+  default     = "%Y-%m-%d-%H-%M"
   description = "Timestamp added to each object"
 }
 
@@ -123,32 +76,32 @@ variable "time_slice_format" {
 # Buffer
 #
 variable "path" {
-  type = string
-  default = "/var/log/td-agent/s3"
+  type        = string
+  default     = "/var/log/td-agent/s3"
   description = ""
 }
 
 variable "timekey" {
-  type = string
-  default = "60m"
+  type        = string
+  default     = "60m"
   description = "Flush the accumulated chunks every n minutes"
 }
 
 variable "timekey_wait" {
-  type = string
-  default = "1m"
+  type        = string
+  default     = "1m"
   description = "Wait n minutes before flushing"
 }
 
 variable "timekey_use_utc" {
-  type = boolean
-  default = true
+  type        = bool
+  default     = true
   description = "Use UTC timestamps"
 }
 
 variable "chunk_limit_size" {
-  type = string
-  default = "256m"
+  type        = string
+  default     = "256m"
   description = "The maximum size of each chunk"
 }
 
@@ -156,8 +109,8 @@ variable "chunk_limit_size" {
 # PVC
 #
 variable "pvc_buffer_size" {
-  type = string
-  default = "5Gi"
+  type        = string
+  default     = "5Gi"
   description = "Size of the volume provided to fluentd's buffer"
 }
 

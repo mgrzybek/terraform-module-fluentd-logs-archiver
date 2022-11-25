@@ -12,14 +12,7 @@ resource "kubernetes_config_map" "configmap" {
         consumer_group = var.consumer_group
         topics         = var.topics
 
-        max_bytes               = var.max_bytes
-        max_wait_time           = var.max_wait_time
-        min_bytes               = var.min_bytes
-        offset_commit_interval  = var.offset_commit_interval
-        offset_commit_threshold = var.offset_commit_threshold
-        fetcher_max_queue_size  = var.fetcher_max_queue_size
-        refresh_topic_interval  = var.refresh_topic_interval
-        start_from_beginning    = var.start_from_beginning
+        start_from_beginning = var.start_from_beginning
 
         access_key        = var.access_key
         secret_key        = var.secret_key
@@ -38,7 +31,7 @@ resource "kubernetes_config_map" "configmap" {
 }
 
 resource "kubernetes_persistent_volume_claim" "fluentd-buffer" {
-  count = ${var.number}
+  count = var.number
   metadata {
     name = "${var.name}-buffer-volume"
   }
