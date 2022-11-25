@@ -30,3 +30,6 @@ override.tf.json
 
 # vi files
 *.swp
+
+# diagrams.net
+*.bkp
