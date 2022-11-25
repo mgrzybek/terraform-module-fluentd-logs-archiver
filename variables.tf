@@ -20,6 +20,7 @@ variable "number" {
 variable "image" {
   type        = string
   description = "Container image providing fluentd with kafka et s3 support"
+  default     = "ghcr.io/mgrzybek/fluentd-kafka-s3-logs-archiver:main"
 }
 
 #####################################################
