@@ -5,12 +5,12 @@ resource "kubernetes_config_map" "configmap" {
   }
 
   data = {
-    fluentd_conf = templatefile(
-      "${path.module}/fluentd.tmpl.conf",
+    fluent_conf = templatefile(
+      "${path.module}/fluent.tmpl.conf",
       {
         broker_servers = var.broker_servers
         consumer_group = var.consumer_group
-        topics         = var.topics
+        topics         = join(",", var.topics)
 
         start_from_beginning = var.start_from_beginning
 
@@ -20,6 +20,9 @@ resource "kubernetes_config_map" "configmap" {
         endpoint          = var.endpoint
         time_slice_format = var.time_slice_format
 
+        verify_peer = var.verify_peer
+
+        region           = var.region
         path             = var.path
         timekey          = var.timekey
         timekey_wait     = var.timekey_wait
@@ -30,31 +33,29 @@ resource "kubernetes_config_map" "configmap" {
   }
 }
 
-resource "kubernetes_persistent_volume_claim" "fluentd-buffer" {
-  count = var.number
+resource "kubernetes_persistent_volume_claim" "buffer" {
   metadata {
-    name = "${var.name}-buffer-volume"
+    name      = "${var.name}-buffer-volume"
+    namespace = var.namespace
   }
   spec {
     access_modes = ["ReadWriteOnce"]
     resources {
       requests = {
-        storage = "${pvc_buffer_size}"
+        storage = var.pvc_buffer_size
       }
     }
   }
 }
 
 resource "kubernetes_deployment" "fluentd-kafka-s3-archiver" {
-  depends_on = [kubernetes_config_map.configmap]
-
   metadata {
     name      = var.name
     namespace = var.namespace
   }
 
   spec {
-    replicas = var.number
+    replicas = 1
     selector {
       match_labels = {
         app = var.name
@@ -86,31 +87,32 @@ resource "kubernetes_deployment" "fluentd-kafka-s3-archiver" {
 
           volume_mount {
             mount_path = var.path
-            name       = "${var.name}-buffer-volume"
+            name       = "${var.name}-buffer"
           }
 
           volume_mount {
             mount_path = "/fluentd/etc"
-            name       = "${var.name}-config-volume"
+            name       = "${var.name}-config"
           }
         }
 
         volume {
           name = "${var.name}-buffer"
+
           persistent_volume_claim {
-            claim_name = "${var.name}-buffer-volume-${count.index}"
+            claim_name = kubernetes_persistent_volume_claim.buffer.metadata.0.name
           }
         }
 
         volume {
-          name = "${var.name}-config-volume"
+          name = "${var.name}-config"
 
           config_map {
-            name = "${var.name}-fluentd-configmap"
+            name = kubernetes_config_map.configmap.metadata.0.name
 
             items {
-              key  = "fluentd_conf"
-              path = "fluentd.conf"
+              key  = "fluent_conf"
+              path = "fluent.conf"
             }
           }
         }

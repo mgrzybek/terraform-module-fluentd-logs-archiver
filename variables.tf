@@ -11,12 +11,6 @@ variable "namespace" {
   description = "The namespace used to install bucket"
 }
 
-variable "number" {
-  type        = number
-  description = "Number of pods to start"
-  default     = 1
-}
-
 variable "image" {
   type        = string
   description = "Container image providing fluentd with kafka et s3 support"
@@ -64,6 +58,11 @@ variable "bucket_name" {
 
 variable "endpoint" {
   type = string
+
+  validation {
+    condition     = can(regex("^https{0,1}://.+", var.endpoint))
+    error_message = "The endpoint has to be a valid http(s) URL"
+  }
 }
 
 variable "time_slice_format" {
@@ -72,6 +71,15 @@ variable "time_slice_format" {
   description = "Timestamp added to each object"
 }
 
+variable "region" {
+  type = string
+}
+
+variable "verify_peer" {
+  type        = bool
+  default     = true
+  description = "Check certificate"
+}
 #####################################################
 # Buffer
 #
@@ -113,4 +121,3 @@ variable "pvc_buffer_size" {
   default     = "5Gi"
   description = "Size of the volume provided to fluentd's buffer"
 }
-
